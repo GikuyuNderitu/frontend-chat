@@ -19,16 +19,22 @@ class Chatroom extends Mediator {
         this._children.push(obj)
         obj.id = this._curId++
         obj.mediator = this
+	   obj.textarea_id = obj.id+'_textarea_id'
+	   obj.render()
+	   $(document).on('click','#'+obj.textarea_id+' ~ button', null, obj.globalChat.bind(obj))
     }
 }
 
-Chatroom.prototype.privateChat = function(message, target_id, sender_id){
-        this.emit('privateChat', {message: message, t_id: target_id, send_id: sender_id})
+Chatroom.prototype.privateChat = function(message, target_id, sender_id, callback){
+	callback()
+     this.emit('privateChat', {message: message, t_id: target_id, send_id: sender_id})
 }
 
-Chatroom.prototype.globalChat = function(message, id){
+Chatroom.prototype.globalChat = function(message, id, callback){
+	callback()
     this._messages.push(message)
     this.emit('globalMessage', {message: message, u_id: id})
 }
+
 
 export default Chatroom
