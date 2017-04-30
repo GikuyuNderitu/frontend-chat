@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 4);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -71,9 +71,138 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__mediator__ = __webpack_require__(3);
+
+class Chatroom extends __WEBPACK_IMPORTED_MODULE_0__mediator__["a" /* default */] {
+    constructor() {
+        super();
+        this._curId = 0;
+        this._children = [];
+        this._messages = [];
+    }
+
+    set curId(val) {
+        this._curId = val;
+    }
+
+    set children(arr) {
+        this._children = arr;
+    }
+
+    subscribe(obj) {
+        this._children.push(obj);
+        obj.id = this._curId++;
+        obj.mediator = this;
+    }
+}
+
+Chatroom.prototype.privateChat = function (message, target_id, sender_id) {
+    this.emit('privateChat', { message: message, t_id: target_id, send_id: sender_id });
+};
+
+Chatroom.prototype.globalChat = function (message, id) {
+    this._messages.push(message);
+    this.emit('globalMessage', { message: message, u_id: id });
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (Chatroom);
+
+/***/ }),
+/* 1 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__colleague__ = __webpack_require__(2);
+
+class User extends __WEBPACK_IMPORTED_MODULE_0__colleague__["a" /* default */] {
+    constructor(name, age) {
+        super(name);
+        this._age = age;
+    }
+
+    globalChat(message) {
+        this._mediator.globalChat(message, this._id);
+    }
+
+    privateChat(message, target) {
+        this._mediator.privateChat(message, target, this._id);
+    }
+
+    receiveEmission(type, payload) {
+        switch (type) {
+            case 'globalMessage':
+                if (payload.u_id !== this._id) console.log(`Username ${this.name} of Id ${this.id}\n\tMessage: ${payload.message}\n\tFrom User: ${payload.u_id}\n\n`);
+                break;
+            case 'privateChat':
+                if (payload.t_id == this._id) console.log(`Username ${this.name} of Id ${this.id}\n\tPrivate Message: ${payload.message}\n\tFrom User: ${payload.send_id}\n\n`);
+                break;
+            default:
+                console.log(`I apologize for the unhandled input!`);
+        }
+    }
+}
+/* harmony default export */ __webpack_exports__["a"] = (User);
+
+/***/ }),
+/* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class Colleague {
+    constructor(name) {
+        this._name = name;
+        this._id = undefined;
+        this._mediator = {};
+    }
+
+    set name(name) {
+        if (name) this._name = name;
+    }
+
+    get name() {
+        return this._name;
+    }
+
+    set id(id) {
+        this._id = id;
+    }
+
+    get id() {
+        return this._id;
+    }
+
+    set mediator(m) {
+        this._mediator = m;
+    }
+
+    receiveEmission(type, payload) {
+        console.log("received message");
+    }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Colleague);
+
+/***/ }),
+/* 3 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+const Mediator = function () {
+    this.emit = (type, payload) => this._children.forEach(child => {
+        child.receiveEmission(type, payload);
+    });
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (Mediator);
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__assets_js_chatroom__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__assets_js_user__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__assets_js_chatroom__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__assets_js_user__ = __webpack_require__(1);
 
 
 
@@ -192,135 +321,6 @@ console.log(c4.id, c4.name);
 
 c1.globalChat("Hello World!");
 c1.privateChat("Hi Bobby, I'm pretty cool ... right?", 2);
-
-/***/ }),
-/* 1 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__mediator__ = __webpack_require__(4);
-
-class Chatroom extends __WEBPACK_IMPORTED_MODULE_0__mediator__["a" /* default */] {
-    constructor() {
-        super();
-        this._curId = 0;
-        this._children = [];
-        this._messages = [];
-    }
-
-    set curId(val) {
-        this._curId = val;
-    }
-
-    set children(arr) {
-        this._children = arr;
-    }
-
-    subscribe(obj) {
-        this._children.push(obj);
-        obj.id = this._curId++;
-        obj.mediator = this;
-    }
-}
-
-Chatroom.prototype.privateChat = function (message, target_id, sender_id) {
-    this.emit('privateChat', { message: message, t_id: target_id, send_id: sender_id });
-};
-
-Chatroom.prototype.globalChat = function (message, id) {
-    this._messages.push(message);
-    this.emit('globalMessage', { message: message, u_id: id });
-};
-
-/* harmony default export */ __webpack_exports__["a"] = (Chatroom);
-
-/***/ }),
-/* 2 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__colleague__ = __webpack_require__(3);
-
-class User extends __WEBPACK_IMPORTED_MODULE_0__colleague__["a" /* default */] {
-    constructor(name, age) {
-        super(name);
-        this._age = age;
-    }
-
-    globalChat(message) {
-        this._mediator.globalChat(message, this._id);
-    }
-
-    privateChat(message, target) {
-        this._mediator.privateChat(message, target, this._id);
-    }
-
-    receiveEmission(type, payload) {
-        switch (type) {
-            case 'globalMessage':
-                if (payload.u_id !== this._id) console.log(`Username ${this.name} of Id ${this.id}\n\tMessage: ${payload.message}\n\tFrom User: ${payload.u_id}\n\n`);
-                break;
-            case 'privateChat':
-                if (payload.t_id == this._id) console.log(`Username ${this.name} of Id ${this.id}\n\tPrivate Message: ${payload.message}\n\tFrom User: ${payload.send_id}\n\n`);
-                break;
-            default:
-                console.log(`I apologize for the unhandled input!`);
-        }
-    }
-}
-/* harmony default export */ __webpack_exports__["a"] = (User);
-
-/***/ }),
-/* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-class Colleague {
-    constructor(name) {
-        this._name = name;
-        this._id = undefined;
-        this._mediator = {};
-    }
-
-    set name(name) {
-        if (name) this._name = name;
-    }
-
-    get name() {
-        return this._name;
-    }
-
-    set id(id) {
-        this._id = id;
-    }
-
-    get id() {
-        return this._id;
-    }
-
-    set mediator(m) {
-        this._mediator = m;
-    }
-
-    receiveEmission(type, payload) {
-        console.log("received message");
-    }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (Colleague);
-
-/***/ }),
-/* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-const Mediator = function () {
-    this.emit = (type, payload) => this._children.forEach(child => {
-        child.receiveEmission(type, payload);
-    });
-};
-
-/* harmony default export */ __webpack_exports__["a"] = (Mediator);
 
 /***/ })
 /******/ ]);
