@@ -1,0 +1,24 @@
+{
+  "name": "front_end_chatroom",
+  "version": "1.0.0",
+  "description": "## Welcome Hi! I started this project to showcase the use of the Mediator Pattern to manage interaction between decoupled objects. This is done through the use of a simulated chat Application!",
+  "main": "main.js",
+  "dependencies": {
+    "babel-core": "^6.24.1",
+    "babel-loader": "^7.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GikuyuNderitu/frontend-chat.git"
+  },
+  "author": "Gikuyu Nderitu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GikuyuNderitu/frontend-chat/issues"
+  },
+  "homepage": "https://github.com/GikuyuNderitu/frontend-chat#readme"
+}
