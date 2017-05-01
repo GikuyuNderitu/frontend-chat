@@ -24,7 +24,7 @@ class User extends Colleague {
 		$('#chat-area').append(`
 			<div class="card large col s12 m4 l3 marg-20">
 				<section class="card-content">
-					<span class="card-title">
+					<span class="my-card-title">
 						${this.name}
 					 	<i class="material-icons small">perm_identity</i>
 						Id: ${this._id}
@@ -45,6 +45,7 @@ class User extends Colleague {
 				</div>
 			</div>`
 		)
+		$(document).on('click','#'+this._textarea_id+' ~ button', null, this.globalChat.bind(this))
 	}
 
 	renderMessages() {
@@ -79,11 +80,16 @@ class User extends Colleague {
     receiveEmission(type, payload) {
         switch(type) {
             case 'globalMessage':
-		  	 this._messages.unshift(payload.message)
-			 this.renderMessages()
+				this._messages.unshift(payload.message)
+				this.renderMessages()
                 if(payload.u_id !== this._id) console.log(`Username ${this.name} of Id ${this.id}\n\tMessage: ${payload.message}\n\tFrom User: ${payload.u_id}\n\n`)
                 break
             case 'privateChat':
+				console.log(payload);
+				if(payload.target_id === this._id) {
+					this._messages.unshift(payload.message)
+					this.renderMessages()
+				}
                 if(payload.t_id == this._id) console.log(`Username ${this.name} of Id ${this.id}\n\tPrivate Message: ${payload.message}\n\tFrom User: ${payload.send_id}\n\n`);
                 break
             default:

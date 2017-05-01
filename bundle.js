@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -71,7 +71,151 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__mediator__ = __webpack_require__(3);
+class Colleague {
+    constructor(name) {
+        this._name = name;
+        this._id = undefined;
+        this._mediator = {};
+    }
+
+    set name(name) {
+        if (name) this._name = name;
+    }
+
+    get name() {
+        return this._name;
+    }
+
+    set id(id) {
+        this._id = id;
+    }
+
+    get id() {
+        return this._id;
+    }
+
+    set mediator(m) {
+        this._mediator = m;
+    }
+
+    receiveEmission(type, payload) {
+        console.log("received message");
+    }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Colleague);
+
+/***/ }),
+/* 1 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__colleague__ = __webpack_require__(0);
+
+class Bot extends __WEBPACK_IMPORTED_MODULE_0__colleague__["a" /* default */] {
+	constructor(name, creator, wheels) {
+		super(name);
+		this._creator = creator;
+		this._wheels = wheels;
+		this._messages = [];
+		this._parentDomNode = $('#chat-area');
+		this._textarea_id = '';
+	}
+
+	get creator() {
+		return this._creator;
+	}
+
+	set textarea_id(id) {
+		this._textarea_id = id;
+	}
+
+	get textarea_id() {
+		return this._textarea_id;
+	}
+
+	static transform_messages(messages) {
+		return messages.reduce((prev, cur) => {
+			return prev + `<li>${cur}</li>`;
+		}, '<ul>') + '</ul>';
+	}
+
+	render() {
+		return undefined;
+	}
+
+	renderMessages() {
+		const ele = $("#" + this.id + "_messages");
+		ele.html(Bot.transform_messages(this._messages));
+	}
+
+	display() {
+		const ele = this._parentDomNode;
+		ele.append();
+	}
+
+	globalChat(message) {
+		const ele = $('#' + this.textarea_id);
+		const newMess = ele.val();
+		this._mediator.globalChat(newMess, this._id, () => {
+			ele.val('');
+			ele.trigger('autoresize');
+		});
+	}
+
+	static transformCommand(message) {
+		switch (message.split(' ')[0]) {
+			case '/help':
+				return `
+					Here are the following commands:\n
+					/help: Display all of the commands
+					/giphy: Get random gif from the internet
+					/randomize: Display a random Sentence
+					/hello: Hello World
+				`;
+			case '/hello':
+				return `Hello World`;
+			default:
+				return `I'm sorry, that's not a valid command`;
+		}
+	}
+
+	privateChat(message, target) {
+		const ele = $('#' + this.textarea_id);
+		const newMess = ele.val();
+		this._mediator.privateChat(newMess, target, this._id, () => {
+			ele.val('');
+			ele.trigger('autoresize');
+			ele.focus();
+		});
+	}
+
+	receiveEmission(type, payload) {
+		switch (type) {
+			case 'globalMessage':
+				if (payload.message[0] === '/') {
+					this._mediator.privateChat('Bot says: ' + Bot.transformCommand(payload.message), payload.u_id, this._id);
+					// this._messages.unshift(Bot.transformCommand(payload.message))
+					// this.renderMessages()
+					//if(payload.u_id !== this._id) console.log(`Botname ${this.name} of Id ${this.id}\n\tMessage: ${payload.message}\n\tFrom Bot: ${payload.u_id}\n\n`)
+				}
+				break;
+			case 'privateChat':
+				if (payload.t_id == this._id) console.log(`Botname ${this.name} of Id ${this.id}\n\tPrivate Message: ${payload.message}\n\tFrom Bot: ${payload.send_id}\n\n`);
+				break;
+			default:
+				console.log(`I apologize for the unhandled input!`);
+		}
+	}
+}
+/* harmony default export */ __webpack_exports__["a"] = (Bot);
+
+/***/ }),
+/* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__mediator__ = __webpack_require__(4);
 
 class Chatroom extends __WEBPACK_IMPORTED_MODULE_0__mediator__["a" /* default */] {
     constructor() {
@@ -95,17 +239,16 @@ class Chatroom extends __WEBPACK_IMPORTED_MODULE_0__mediator__["a" /* default */
         obj.mediator = this;
         obj.textarea_id = obj.id + '_textarea_id';
         obj.render();
-        $(document).on('click', '#' + obj.textarea_id + ' ~ button', null, obj.globalChat.bind(obj));
     }
 }
 
 Chatroom.prototype.privateChat = function (message, target_id, sender_id, callback) {
-    callback();
-    this.emit('privateChat', { message: message, t_id: target_id, send_id: sender_id });
+    if (typeof callback === 'function') callback();
+    this.emit('privateChat', { message: message, target_id: target_id, sender_id: sender_id });
 };
 
 Chatroom.prototype.globalChat = function (message, id, callback) {
-    callback();
+    if (typeof callback === 'function') callback();
     this._messages.push(message);
     this.emit('globalMessage', { message: message, u_id: id });
 };
@@ -113,11 +256,11 @@ Chatroom.prototype.globalChat = function (message, id, callback) {
 /* harmony default export */ __webpack_exports__["a"] = (Chatroom);
 
 /***/ }),
-/* 1 */
+/* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__colleague__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__colleague__ = __webpack_require__(0);
 
 class User extends __WEBPACK_IMPORTED_MODULE_0__colleague__["a" /* default */] {
 	constructor(name, age) {
@@ -150,7 +293,7 @@ class User extends __WEBPACK_IMPORTED_MODULE_0__colleague__["a" /* default */] {
 		$('#chat-area').append(`
 			<div class="card large col s12 m4 l3 marg-20">
 				<section class="card-content">
-					<span class="card-title">
+					<span class="my-card-title">
 						${this.name}
 					 	<i class="material-icons small">perm_identity</i>
 						Id: ${this._id}
@@ -170,6 +313,7 @@ class User extends __WEBPACK_IMPORTED_MODULE_0__colleague__["a" /* default */] {
 					</div>
 				</div>
 			</div>`);
+		$(document).on('click', '#' + this._textarea_id + ' ~ button', null, this.globalChat.bind(this));
 	}
 
 	renderMessages() {
@@ -209,6 +353,11 @@ class User extends __WEBPACK_IMPORTED_MODULE_0__colleague__["a" /* default */] {
 				if (payload.u_id !== this._id) console.log(`Username ${this.name} of Id ${this.id}\n\tMessage: ${payload.message}\n\tFrom User: ${payload.u_id}\n\n`);
 				break;
 			case 'privateChat':
+				console.log(payload);
+				if (payload.target_id === this._id) {
+					this._messages.unshift(payload.message);
+					this.renderMessages();
+				}
 				if (payload.t_id == this._id) console.log(`Username ${this.name} of Id ${this.id}\n\tPrivate Message: ${payload.message}\n\tFrom User: ${payload.send_id}\n\n`);
 				break;
 			default:
@@ -219,46 +368,7 @@ class User extends __WEBPACK_IMPORTED_MODULE_0__colleague__["a" /* default */] {
 /* harmony default export */ __webpack_exports__["a"] = (User);
 
 /***/ }),
-/* 2 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-class Colleague {
-    constructor(name) {
-        this._name = name;
-        this._id = undefined;
-        this._mediator = {};
-    }
-
-    set name(name) {
-        if (name) this._name = name;
-    }
-
-    get name() {
-        return this._name;
-    }
-
-    set id(id) {
-        this._id = id;
-    }
-
-    get id() {
-        return this._id;
-    }
-
-    set mediator(m) {
-        this._mediator = m;
-    }
-
-    receiveEmission(type, payload) {
-        console.log("received message");
-    }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (Colleague);
-
-/***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -271,13 +381,15 @@ const Mediator = function () {
 /* harmony default export */ __webpack_exports__["a"] = (Mediator);
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__assets_js_chatroom__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__assets_js_user__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__assets_js_chatroom__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__assets_js_user__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__assets_js_bot__ = __webpack_require__(1);
+
 
 
 
@@ -285,23 +397,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 $(document).ready(function () {
 	const chatRoom = new __WEBPACK_IMPORTED_MODULE_0__assets_js_chatroom__["a" /* default */]();
-	// const c1 = new User('Jane')
-	// const c2 = new User('Will')
-	// const c3 = new User('Bobby')
-	// const c4 = new User('Sophia')
-	//
-	// m1.subscribe(c1)
-	// m1.subscribe(c2)
-	// m1.subscribe(c3)
-	// m1.subscribe(c4)
-	//
-	// console.log(c1.id, c1.name)
-	// console.log(c2.id, c2.name)
-	// console.log(c3.id, c3.name)
-	// console.log(c4.id, c4.name)
-	//
-	// c1.globalChat("Hello World!")
-	// c1.privateChat("Hi Bobby, I'm pretty cool ... right?", 2)
+	chatRoom.subscribe(new __WEBPACK_IMPORTED_MODULE_2__assets_js_bot__["a" /* default */]());
 
 	const addUser = () => {
 		const name = $('#new-name').val();

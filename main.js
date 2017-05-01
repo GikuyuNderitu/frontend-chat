@@ -1,27 +1,13 @@
 'use strict'
 import Chatroom from './assets/js/chatroom'
 import User from './assets/js/user'
+import Bot from './assets/js/bot'
 
 
 $(document).ready(function(){
 	const chatRoom = new Chatroom()
-	// const c1 = new User('Jane')
-	// const c2 = new User('Will')
-	// const c3 = new User('Bobby')
-	// const c4 = new User('Sophia')
-	//
-	// m1.subscribe(c1)
-	// m1.subscribe(c2)
-	// m1.subscribe(c3)
-	// m1.subscribe(c4)
-	//
-	// console.log(c1.id, c1.name)
-	// console.log(c2.id, c2.name)
-	// console.log(c3.id, c3.name)
-	// console.log(c4.id, c4.name)
-	//
-	// c1.globalChat("Hello World!")
-	// c1.privateChat("Hi Bobby, I'm pretty cool ... right?", 2)
+	chatRoom.subscribe(new Bot())
+
 
 	const addUser = () => {
 		const name = $('#new-name').val()
