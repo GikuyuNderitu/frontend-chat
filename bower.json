@@ -1,0 +1,26 @@
+{
+  "name": "front_end_chatroom",
+  "description": "## Welcome Hi! I started this project to showcase the use of the Mediator Pattern to manage interaction between decoupled objects. This is done through the use of a simulated chat Application!",
+  "main": "server.js",
+  "authors": [
+    "Gikuyu Nderitu"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "chat",
+    "material-design",
+    "skillful",
+    "javascript"
+  ],
+  "homepage": "https://github.com/GikuyuNderitu/frontend-chat",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#2.0.0-rc.3"
+  }
+}
