@@ -9,21 +9,21 @@
         <div class="card large col s12 m4 l3 marg-20">
             <section class="card-content">
                 <span class="my-card-title">
-                    ${this.name}
+                    Name: [[name]]
                     <i class="material-icons small">perm_identity</i>
-                    Id: ${this._id}
+                    Id: [[user_id]]
                     <i class="material-icons small">perm_identity</i>
-                    Age: ${this.age}
+                    Age: [[age]]
                 </span>
             </section>
 
-            <section id="${this.id}_messages" class="mini-messages no-x with-y"> [[messages]] ${User.transform_messages(this._messages)}</section>
+            <section class="mini-messages no-x with-y"> [[messages]] </section>
 
             <div class="divider"></div>
 
             <div class="card-content">
                 <div class="input-field inline">
-                    <textarea id="${this.textarea_id}" class="materialize-textarea user-message">{{newMessage}}</textarea>
+                    <textarea class="materialize-textarea user-message">{{newMessage}}</textarea>
                     <label for="">New Message</label>
                     <button class="btn waves-effect waves-light" type="submit">Submit
                         <i class="material-icons right">send</i>
@@ -44,8 +44,9 @@
             static get properties() {
                 return {
                     name: String,
+                    user_id: Number,
                     age: Number,
-                    messages: Array
+                    messages: Array,
                     newMessage: {
                         type: String,
                         notify: false
