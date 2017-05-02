@@ -1,4 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
 
 <dom-module id="chat-client">
     <template>
@@ -11,13 +12,20 @@
                 <span class="my-card-title">
                     Name: [[name]]
                     <i class="material-icons small">perm_identity</i>
-                    Id: [[user_id]]
+                    Id: [[userId]]
                     <i class="material-icons small">perm_identity</i>
                     Age: [[age]]
                 </span>
             </section>
 
-            <section class="mini-messages no-x with-y"> [[messages]] </section>
+
+            <section class="mini-messages no-x with-y"> 
+                <ul>
+                    <template is="dom-repeat" items="[[messages]]">
+                        <li>[[item]]</li>
+                    </template>
+                </ul>
+            </section>
 
             <div class="divider"></div>
 
@@ -44,9 +52,12 @@
             static get properties() {
                 return {
                     name: String,
-                    user_id: Number,
+                    userId: Number,
                     age: Number,
-                    messages: Array,
+                    messages: {
+                        type: Array,
+                        value: ['1st Message', '2nd Message', '3rd Message','4th Message']
+                    },
                     newMessage: {
                         type: String,
                         notify: false
@@ -56,5 +67,7 @@
 
 
         }
+
+        window.customElements.define(ChatClient.is, ChatClient)
     </script>
 </dom-module>
