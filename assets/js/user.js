@@ -32,7 +32,7 @@ class User extends Colleague {
 					 	Age: ${this.age}
 					 </span>
 					</section>
-				<section id="${this.id}_messages" class="mini-messages no-x with-y"> ${User.transform_messages(this._messages)}</section>
+				<section id="messages-for-${this.id}" class="mini-messages no-x with-y"> ${User.transform_messages(this._messages)}</section>
 				<div class="divider"></div>
 				<div class="card-content">
 					<div class="input-field inline">
@@ -45,12 +45,14 @@ class User extends Colleague {
 				</div>
 			</div>`
 		)
-		$(document).on('click','#'+this._textarea_id+' ~ button', null, this.globalChat.bind(this))
+		let button = document.querySelector(`#${this._textarea_id} ~ button`)
+		button.addEventListener('click', this.globalChat.bind(this))
 	}
 
 	renderMessages() {
-		const ele = $("#"+this.id+"_messages")
-		ele.html(User.transform_messages(this._messages))
+		const ele = document.querySelector(`#messages-for-${this._id}`)
+		console.log(User.transform_messages(this._messages));
+		ele.innerHTML = User.transform_messages(this._messages)
 	}
 
     display() {
@@ -59,12 +61,14 @@ class User extends Colleague {
     }
 
     globalChat(message) {
-	   const ele = $('#'+this.textarea_id)
-	   const newMess = ele.val()
-        this._mediator.globalChat(newMess, this._id, () => {
-		   ele.val('')
-		   ele.trigger('autoresize')
-	   })
+	   
+		const ele = $('#'+this.textarea_id)
+		const newMess = ele.val()
+		console.log(newMess);
+		this._mediator.globalChat(newMess, this._id, () => {
+			ele.val('')
+			ele.trigger('autoresize')
+		})
     }
 
     privateChat(message, target) {

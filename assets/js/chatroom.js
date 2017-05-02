@@ -19,7 +19,7 @@ class Chatroom extends Mediator {
 		this._children.push(obj)
 		obj.id = this._curId++
 		obj.mediator = this
-		obj.textarea_id = obj.id+'_textarea_id'
+		obj.textarea_id = 'textarea_id_'+obj.id
 		obj.render()
     }
 }
