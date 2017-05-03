@@ -27,16 +27,15 @@
                 </ul>
             </section>
 
+            
             <div class="divider"></div>
 
             <div class="card-content">
-                <div class="input-field inline">
-                    <textarea class="materialize-textarea user-message">{{newMessage}}</textarea>
-                    <label for="">New Message</label>
-                    <button class="btn waves-effect waves-light" type="submit">Submit
+                <paper-input label="New Message"></paper-input>
+                <paper-textarea label="New Message"></paper-textarea>
+                <button class="btn waves-effect waves-light" type="submit">Submit
                         <i class="material-icons right">send</i>
-                    </button>
-                </div>
+                </button>
             </div>
         </div>
     </template>
@@ -59,8 +58,7 @@
                         value: ['1st Message', '2nd Message', '3rd Message','4th Message']
                     },
                     newMessage: {
-                        type: String,
-                        notify: false
+                        type: String
                     }
                 }
             }

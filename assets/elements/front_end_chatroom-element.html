@@ -1,0 +1,96 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+
+<!--
+`front_end_chatroom-element`
+
+
+@demo demo/index.html
+-->
+
+<dom-module id="chat-client">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <paper-card
+        animated-shadow=true>
+
+        <!--Header TODO :: Change color of header based on currently selected status-->
+        <section class="card-content">
+            <span class="my-card-title">
+                Name: [[name]]
+                <i class="material-icons small">perm_identity</i>
+                Id: [[userId]]
+                <i class="material-icons small">perm_identity</i>
+                Age: [[age]]
+            </span>
+        </section>
+
+        <section class="card-content"> 
+            <ul>
+                <template is="dom-repeat" items="[[messages]]">
+                    <li>[[item]]</li>
+                </template>
+            </ul>
+        </section>
+
+            
+        <div class="divider"></div>
+
+        <div class="card-content">
+        <!--<paper-input label="New Message"></paper-input>-->
+            <paper-textarea label="New Message" value="{{newMessage}}"></paper-textarea>
+            <paper-button 
+                class="btn waves-effect waves-light blue" 
+                type="submit"
+                on-tap="submitMsg">
+                Chat!
+                <i class="material-icons right">send</i>
+            </paper-button>
+        </div>
+    </paper-card>
+    
+    <!--<div class="card large col s12 m4 l3 marg-20">
+    </div>-->
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'chat-client',
+
+      properties: {
+          name: String,
+          userId: Number,
+          age: Number,
+          messages: {
+              type: Array,
+              value: [],
+          },
+          newMessage: {
+              type: String
+          }
+      },
+
+      submitMsg() {
+          if(this.newMessage) {
+            const cleanUp = () => { this.newMessage = '' }
+            this.fire('newMessage', {message: this.newMessage, callback: cleanUp})
+          }
+      },
+
+      addMsg(newMessages) {
+        this.unshift('messages', newMessages)
+      }
+
+    });
+  </script>
+</dom-module>

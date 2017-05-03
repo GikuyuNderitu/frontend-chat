@@ -1,11 +1,12 @@
 import Colleague from './colleague'
 class User extends Colleague {
     constructor(name, age) {
-        super(name)
-        this._age = age
-	   this._messages = []
-	   this._parentDomNode = $('#chat-area')
-	   this._textarea_id = ''
+		super(name)
+		this._age = age
+		this._messages = []
+		this._parentDomNode = $('#chat-area')
+		this._textarea_id = ''
+		this._chat_client = ''
     }
 
 	get age() { return this._age}
@@ -21,36 +22,21 @@ class User extends Colleague {
 	}
 
 	render() {
-		$('#chat-area').append(`
-			<div class="card large col s12 m4 l3 marg-20">
-				<section class="card-content">
-					<span class="my-card-title">
-						${this.name}
-					 	<i class="material-icons small">perm_identity</i>
-						Id: ${this._id}
-						<i class="material-icons small">perm_identity</i>
-					 	Age: ${this.age}
-					 </span>
-					</section>
-				<section id="${this.id}_messages" class="mini-messages no-x with-y"> ${User.transform_messages(this._messages)}</section>
-				<div class="divider"></div>
-				<div class="card-content">
-					<div class="input-field inline">
-						<textarea id="${this.textarea_id}" class="materialize-textarea user-message"></textarea>
-						<label for="">New Message</label>
-						<button class="btn waves-effect waves-light" type="submit">Submit
-							<i class="material-icons right">send</i>
-						</button>
-					</div>
-				</div>
-			</div>`
-		)
-		$(document).on('click','#'+this._textarea_id+' ~ button', null, this.globalChat.bind(this))
+		this._chat_client = `chat-client-${this._id}`
+		let chatClient = document.createElement("chat-client")
+		chatClient.setAttribute('name', this._name)
+		chatClient.setAttribute('age', this._age)
+		chatClient.setAttribute('user-id', this._id)
+		chatClient.setAttribute('messages', '[]')
+		chatClient.setAttribute('id', this._chat_client)
+		chatClient.classList.add("col", "s12", "m4", "l3")
+		document.querySelector('#chat-area').appendChild(chatClient)
+		chatClient.addEventListener('newMessage', this.globalChat.bind(this))
 	}
 
-	renderMessages() {
-		const ele = $("#"+this.id+"_messages")
-		ele.html(User.transform_messages(this._messages))
+	renderMessages(msg) {
+		const ele = document.querySelector(`#${this._chat_client}`)
+		ele.addMsg(msg)
 	}
 
     display() {
@@ -58,15 +44,11 @@ class User extends Colleague {
 	    ele.append()
     }
 
-    globalChat(message) {
-	   const ele = $('#'+this.textarea_id)
-	   const newMess = ele.val()
-        this._mediator.globalChat(newMess, this._id, () => {
-		   ele.val('')
-		   ele.trigger('autoresize')
-	   })
+    globalChat({detail: {message, callback}}) {
+		this._mediator.globalChat(message, this._id, callback)
     }
 
+	// Refactor this to receive incoming private messages from users
     privateChat(message, target) {
 	   const ele = $('#'+this.textarea_id)
 	   const newMess = ele.val()
@@ -81,7 +63,7 @@ class User extends Colleague {
         switch(type) {
             case 'globalMessage':
 				this._messages.unshift(payload.message)
-				this.renderMessages()
+				this.renderMessages(payload.message)
                 if(payload.u_id !== this._id) console.log(`Username ${this.name} of Id ${this.id}\n\tMessage: ${payload.message}\n\tFrom User: ${payload.u_id}\n\n`)
                 break
             case 'privateChat':
