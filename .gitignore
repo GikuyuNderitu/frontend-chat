@@ -2,3 +2,4 @@
 /bower_components
 nohup.out
 bundle.js
+/dist

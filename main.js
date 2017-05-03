@@ -40,7 +40,7 @@ $(document).ready(function(){
 		inDuration: 400,
 		outDuration: 200,
 		startingTop: '2%',
-		endingTop: '15%'
+		endingTop: '35%'
 	})
 
 	// Initialize submit user
