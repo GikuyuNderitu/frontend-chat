@@ -1,0 +1,71 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
+
+<dom-module id="chat-client">
+    <template>
+        <style>
+        /*Add Style*/
+        </style>
+
+        <div class="card large col s12 m4 l3 marg-20">
+            <section class="card-content">
+                <span class="my-card-title">
+                    Name: [[name]]
+                    <i class="material-icons small">perm_identity</i>
+                    Id: [[userId]]
+                    <i class="material-icons small">perm_identity</i>
+                    Age: [[age]]
+                </span>
+            </section>
+
+
+            <section class="mini-messages no-x with-y"> 
+                <ul>
+                    <template is="dom-repeat" items="[[messages]]">
+                        <li>[[item]]</li>
+                    </template>
+                </ul>
+            </section>
+
+            
+            <div class="divider"></div>
+
+            <div class="card-content">
+                <paper-input label="New Message"></paper-input>
+                <paper-textarea label="New Message"></paper-textarea>
+                <button class="btn waves-effect waves-light" type="submit">Submit
+                        <i class="material-icons right">send</i>
+                </button>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        class ChatClient extends Polymer.Element {
+            static get is() { return 'chat-client'}
+
+            constructor() {
+                super()
+            }
+
+            static get properties() {
+                return {
+                    name: String,
+                    userId: Number,
+                    age: Number,
+                    messages: {
+                        type: Array,
+                        value: ['1st Message', '2nd Message', '3rd Message','4th Message']
+                    },
+                    newMessage: {
+                        type: String
+                    }
+                }
+            }
+
+
+        }
+
+        window.customElements.define(ChatClient.is, ChatClient)
+    </script>
+</dom-module>
